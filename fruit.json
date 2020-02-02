@@ -1,0 +1,7 @@
+{
+   "frutas": [
+       { "nombre_fruta":"Manzana" , "cantidad":10 }, 
+       { "nombre_fruta":"Pera" , "cantidad":20 }, 
+       { "nombre_fruta":"Naranja" , "cantidad":30 }
+    ]
+}
