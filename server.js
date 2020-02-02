@@ -9,6 +9,7 @@ server.use(router);
 
 server.listen(port);
 
+<<<<<<< HEAD
 // Cargar modulos y crear nueva aplicacion
 var express = require("express"); 
 var cors = require('cors')
@@ -80,3 +81,129 @@ app.delete('/frutas/:id', function(req, res) {
    console.log('Delete ' + id);
 });
   
+=======
+      app.use(bodyParser.json()); // for parsing application/json
+      app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+      
+      app.use(express.static('public'));
+      app.use(permitirCrossDomain);
+      
+      
+      app.get('/', function(req, res){
+        res.send('hello world');
+      });
+
+      app.get('/listFruits', (req, res, next) => {
+        var client = new pg.Client(conString);
+        client.connect(function(err) {
+            if(err) {
+                return console.error('could not connect to postgres', err);
+                return res.status(500).json({success: false, data: err});
+            }
+        
+            client.query('SELECT * FROM usuario', function(err, result) {
+                if(err) {
+                    return console.error('error running query', err);
+                }
+        
+                client.end();
+                return res.json(result.rows);
+                
+            });
+        });
+    });
+    
+    app.get('/listFruit/:id',(req,res)=>{
+        var client = new pg.Client(conString);
+        var id=req.params.id;
+    
+        client.connect(function(err) {
+            if(err) {
+                return console.error('could not connect to postgres', err);
+                return res.status(500).json({success: false, data: err});
+            }
+    
+            client.query('SELECT * FROM usuario WHERE id=' + id + ';', function(err, result) {
+                if(err) {
+                    return console.error('error running query', err);
+                }
+                
+                //console.log(result);
+                    client.end();
+                return res.json(result.rows);
+            
+            });
+            
+        });
+    });
+    app.put('/updateFruit',(req,res)=>{
+        var client = new pg.Client(conString);
+        var id=req.body.id;
+        client.connect(function(err) {
+            if(err) {
+                return console.error('could not connect to postgres', err);
+                return res.status(500).json({success: false, data: err});
+            }
+    
+            client.query("UPDATE frutas SET nombre_fruta='"+req.body.nombre_fruta+"',cantidad='"+req.body.cantidad+"' WHERE id='" + id + "';", function(err, result) {
+                
+                if(err) {
+                    return console.error('error running query', err);
+                }
+                
+                //console.log(result);
+                    client.end();
+                return res.json(result);
+            });
+        });
+    });
+    app.post('/SaveFruit', (req, res) => {
+        var client = new pg.Client(conString);
+        client.connect(function(err) {
+            if(err) {
+                return console.error('could not connect to postgres', err);
+                return res.status(500).json({success: false, data: err});
+            }
+            
+            console.log("miau "+util.inspect(req,false,null));
+            
+            client.query("INSERT INTO  frutas  (nombre_fruta, cantidad) VALUES ('"+req.body.nombre_fruta+"', '"+req.body.cantidad+"');", function(err, result) {
+                if(err) {
+                    return console.error('error running query', err);
+                }
+            
+                //console.log(result);
+                client.end();
+                return res.json(result.rows);
+                
+            });
+            
+        });
+    });
+    app.delete('/deleteFruit',(req,res)=>{
+        var client = new pg.Client(conString);
+        var id=req.body.id;
+    
+        client.connect(function(err) {
+            if(err) {
+                return console.error('could not connect to postgres', err);
+                return res.status(500).json({success: false, data: err});
+            }
+        
+            client.query('DELETE FROM usuario WHERE id=' + id + ';', function(err, result) {
+                
+                if(err) {
+                    return console.error('error running query', err);
+                }
+                
+                //console.log(result);
+                    client.end();
+                return res.json(result);
+            });
+        });
+    
+    
+    });
+    
+    app.listen(process.env.PORT || 8080, function(){console.log("the server is running");});
+>>>>>>> 384f74f00515a042c3238bdb21eb608efc832700
