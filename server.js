@@ -6,7 +6,7 @@ var multer = require('multer');
 const pg    = require('pg');
 
 pg.defaults.ssl = true;
-var conString = "postgres://vndkgmnovwcudz:bd0da1d0c70efdea9f06be6f4e859b17d89f9202f3754ab66384693942ffb4bf@ec2-174-129-33-186.compute-1.amazonaws.com:5432/da6r9929umk6ro";
+var conString = "postgres://evvarewtkszyzu:37cf89f338fc247367271e8e6aa7edeacca6e68d4db29d2724aa58aa3f619329@ec2-3-220-86-239.compute-1.amazonaws.com:5432/db6fl7cjfgorau";
 var express = require('express');
 var http = require('http'),
     formidable = require('formidable'),
