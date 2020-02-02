@@ -1,151 +1,82 @@
-var http = require('http'),
-express  = require('express'),
-bodyParser   = require('body-parser');
+const jsonServer = require('json-server');
+const server = jsonServer.create();
+const router = jsonServer.router('fruit.json');
+const middlewares = jsonServer.defaults();
+const port = process.env.PORT || 3000;
 
-var multer = require('multer'); 
-const pg    = require('pg');
+server.use(middlewares);
+server.use(router);
 
-pg.defaults.ssl = true;
-var conString = "postgres://evvarewtkszyzu:37cf89f338fc247367271e8e6aa7edeacca6e68d4db29d2724aa58aa3f619329@ec2-3-220-86-239.compute-1.amazonaws.com:5432/db6fl7cjfgorau";
-var express = require('express');
-var http = require('http'),
-    formidable = require('formidable'),
-    util = require('util'),
-    fs   = require('fs-extra');
-    
-    
-function permitirCrossDomain(req, res, next) {
-        //en vez de * se puede definir SÓLO los orígenes que permitimos
-        res.header('Access-Control-Allow-Origin', '*'); 
-        //metodos http permitidos para CORS
-        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'); 
-        res.header('Access-Control-Allow-Headers', 'Content-Type');
-        next();
-      }  
-      
-      var app = express();
+server.listen(port);
 
-      app.use(bodyParser.json()); // for parsing application/json
-      app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-      
-      app.use(express.static('public'));
-      app.use(permitirCrossDomain);
-      
-      
-      app.get('/', function(req, res){
-        res.send('hello world');
-      });
-
-      app.get('/listFruits', (req, res, next) => {
-        var client = new pg.Client(conString);
-        client.connect(function(err) {
-            if(err) {
-                return console.error('could not connect to postgres', err);
-                return res.status(500).json({success: false, data: err});
-            }
-        
-            client.query('SELECT * FROM usuario', function(err, result) {
-                if(err) {
-                    return console.error('error running query', err);
-                }
-        
-                client.end();
-                return res.json(result.rows);
-                
-            });
-        });
-    });
-    
-    app.get('/listFruit/:id',(req,res)=>{
-        var client = new pg.Client(conString);
-        var id=req.params.id;
-    
-        client.connect(function(err) {
-            if(err) {
-                return console.error('could not connect to postgres', err);
-                return res.status(500).json({success: false, data: err});
-            }
-    
-            client.query('SELECT * FROM usuario WHERE id=' + id + ';', function(err, result) {
-                if(err) {
-                    return console.error('error running query', err);
-                }
-                
-                //console.log(result);
-                    client.end();
-                return res.json(result.rows);
-            
-            });
-            
-        });
-    });
-    app.put('/updateFruit',(req,res)=>{
-        var client = new pg.Client(conString);
-        var id=req.body.id;
-        client.connect(function(err) {
-            if(err) {
-                return console.error('could not connect to postgres', err);
-                return res.status(500).json({success: false, data: err});
-            }
-    
-            client.query("UPDATE usuario SET nombre='"+req.body.nombre+"',mail='"+req.body.mail+"', nom_user='"+req.body.nom_user+"',pass='"+req.body.pass+"' WHERE id='" + id + "';", function(err, result) {
-                
-                if(err) {
-                    return console.error('error running query', err);
-                }
-                
-                //console.log(result);
-                    client.end();
-                return res.json(result);
-            });
-        });
-    });
-    app.post('/SaveFruit', (req, res) => {
-        var client = new pg.Client(conString);
-        client.connect(function(err) {
-            if(err) {
-                return console.error('could not connect to postgres', err);
-                return res.status(500).json({success: false, data: err});
-            }
-            
-            console.log("miau "+util.inspect(req,false,null));
-            
-            client.query("INSERT INTO  usuario  (nombre,mail,nom_user,pass) VALUES ('"+req.body.nombre+"', '"+req.body.mail+"', '"+req.body.nom_user+"', '"+req.body.pass+"');", function(err, result) {
-                if(err) {
-                    return console.error('error running query', err);
-                }
-            
-                //console.log(result);
-                client.end();
-                return res.json(result.rows);
-                
-            });
-            
-        });
-    });
-    app.delete('/deleteFruit',(req,res)=>{
-        var client = new pg.Client(conString);
-        var id=req.body.id;
-    
-        client.connect(function(err) {
-            if(err) {
-                return console.error('could not connect to postgres', err);
-                return res.status(500).json({success: false, data: err});
-            }
-        
-            client.query('DELETE FROM usuario WHERE id=' + id + ';', function(err, result) {
-                
-                if(err) {
-                    return console.error('error running query', err);
-                }
-                
-                //console.log(result);
-                    client.end();
-                return res.json(result);
-            });
-        });
-    
-    
-    });
-    
-    app.listen(process.env.PORT || 8080, function(){console.log("the server is running");});
+// Cargar modulos y crear nueva aplicacion
+var express = require("express"); 
+var cors = require('cors')
+var app = express();
+app.use(cors())
+ 
+var bodyParser = require('body-parser');
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+ 
+//GetAll
+//Ejemplo: GET http://localhost:8080/item
+app.get('/frutas', function(req, res, next) {
+  if(req.query.filter) {
+   next();
+   return;
+  }
+  res.send('Get all');
+  console.log('Get all');
+});
+ 
+//GetById
+//Ejemplo: GET http://localhost:8080/item/10
+app.get('/frutas/:id', function(req, res, next) {
+  var id = req.params.id;
+  res.send('Get ' + req.params.id);
+  console.log('Get ' + req.params.id);
+});
+ 
+//GetFiltered
+//Ejemplo: GET http://localhost:8080/item?filter=ABC
+app.get('/frutas', function(req, res) {
+  var filter = req.query.filter;
+  res.send('Get filter ' + filter);
+  console.log('Get filter ' + filter);
+});
+ 
+//Create
+//Ejemplo: POST http://localhost:8080/item
+app.post('/frutas', function(req, res) {
+   var data = req.body.data;
+   res.send('Add ' + data);
+   console.log('Add ' + data);
+});
+ 
+//Replace
+//Ejemplo: PUT http://localhost:8080/item/10
+app.put('/frutas/:id', function(req, res) {
+   var id = req.params.id;
+   var data = req.body.data;
+   res.send('Replace ' + id + ' with ' + data);
+   console.log('Replace ' + id + ' with ' + data);
+});
+ 
+//Update
+//Ejemplo: PATCH http://localhost:8080/item/10
+app.patch('/frutas/:id', function(req, res) {
+   var id = req.params.id;
+   var data = req.body.data;
+   res.send('Update ' + id + ' with ' + data);
+   console.log('Update ' + id + ' with ' + data);
+});
+ 
+//Delete
+//Ejemplo: DEL http://localhost:8080/items
+app.delete('/frutas/:id', function(req, res) {
+   var id = req.params.id;
+   res.send('Delete ' + id);
+   console.log('Delete ' + id);
+});
+  
