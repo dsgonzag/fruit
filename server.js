@@ -88,7 +88,7 @@ function permitirCrossDomain(req, res, next) {
                 return res.status(500).json({success: false, data: err});
             }
     
-            client.query("UPDATE usuario SET nombre='"+req.body.nombre+"',mail='"+req.body.mail+"', nom_user='"+req.body.nom_user+"',pass='"+req.body.pass+"' WHERE id='" + id + "';", function(err, result) {
+            client.query("UPDATE frutas SET nombre_fruta='"+req.body.nombre_fruta+"',cantidad='"+req.body.cantidad+"' WHERE id='" + id + "';", function(err, result) {
                 
                 if(err) {
                     return console.error('error running query', err);
@@ -110,7 +110,7 @@ function permitirCrossDomain(req, res, next) {
             
             console.log("miau "+util.inspect(req,false,null));
             
-            client.query("INSERT INTO  usuario  (nombre,mail,nom_user,pass) VALUES ('"+req.body.nombre+"', '"+req.body.mail+"', '"+req.body.nom_user+"', '"+req.body.pass+"');", function(err, result) {
+            client.query("INSERT INTO  frutas  (nombre_fruta, cantidad) VALUES ('"+req.body.nombre_fruta+"', '"+req.body.cantidad+"');", function(err, result) {
                 if(err) {
                     return console.error('error running query', err);
                 }
